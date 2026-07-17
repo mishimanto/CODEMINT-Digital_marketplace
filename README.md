@@ -1,66 +1,124 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
-<p align="center">
-<a href="https://travis-ci.org/laravel/framework"><img src="https://travis-ci.org/laravel/framework.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+# Digital Marketplace
 
-## About Laravel
+A Laravel-based marketplace application maintained in this repository. The project uses Laravel 9, modular structure (`Modules/`), and integrates multiple payment gateways and storefront features.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## Quick overview
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **Framework:** Laravel 9
+- **Language:** PHP >= 8.0.2
+- **Frontend:** Vite, React (optional), Bootstrap, Sass
+- **Modules:** `nwidart/laravel-modules` (code in `Modules/`)
+- **Payments:** Stripe, PayPal, Razorpay, MercadoPago, Mollie, Iyzico, PayMongo (see `composer.json`)
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## Key features
 
-## Learning Laravel
+- Modular architecture with `Modules/` for domain separation
+- Shopping cart support (`bumbummen99/shoppingcart`)
+- Multiple payment gateway integrations
+- Image handling (`intervention/image`) and PDF generation (`barryvdh/laravel-dompdf`)
+- JWT auth support (`tymon/jwt-auth`) and social login
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+## Requirements
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+- PHP >= 8.0.2
+- Composer
+- Node.js (v16+) and npm / Yarn
+- MySQL (or other DB supported by Laravel)
+- Optional: Redis, AWS S3 (for files), Pusher (for realtime)
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Setup (development)
 
-## Laravel Sponsors
+1. Clone the repository
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+	git clone <repo-url>
+	cd Digital_marketplace
 
-### Premium Partners
+2. Install PHP dependencies
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+	composer install --no-interaction --prefer-dist
+
+3. Copy environment file and generate app key
+
+	copy .env.example .env
+	php artisan key:generate
+
+4. Configure `.env` (database, mail, payment credentials)
+
+	- DB_CONNECTION, DB_HOST, DB_PORT, DB_DATABASE, DB_USERNAME, DB_PASSWORD
+	- MAIL_* settings
+	- Payment gateway keys (Stripe, PayPal, RAZORPAY_*, MERCADOPAGO_*, etc.)
+	- `JWT_SECRET` (exists in `.env.example`)
+
+5. Install JS dependencies and build assets
+
+	npm install
+	npm run dev
+
+6. Run migrations and optional seeders
+
+	php artisan migrate
+	php artisan db:seed
+
+7. Create storage symlink
+
+	php artisan storage:link
+
+8. Serve the application
+
+	php artisan serve
+
+Or configure your webserver (Apache/Nginx) to point to the `public/` directory.
+
+## Environment variables
+
+This repo includes an example `.env.example`. Important variables to set:
+
+- `APP_URL`, `APP_ENV`, `APP_DEBUG`
+- Database: `DB_*`
+- Mail: `MAIL_*`
+- Filesystem/AWS: `AWS_*`
+- Realtime: `PUSHER_*`, `VITE_PUSHER_*`
+- Payment credentials for the gateways used in `composer.json`
+- `JWT_SECRET`, `APP_MODE`
+
+## Running tests
+
+Run unit and feature tests with PHPUnit or Artisan:
+
+	./vendor/bin/phpunit
+	# or
+	php artisan test
+
+## Useful Artisan commands
+
+- `php artisan migrate` — run migrations
+- `php artisan db:seed` — run seeders
+- `php artisan queue:work` — process queued jobs
+- `php artisan route:list` — view registered routes
+
+## Project structure (high level)
+
+- `app/` — application core (models, controllers, providers)
+- `Modules/` — modular features and domain code
+- `resources/` — views, frontend assets
+- `public/` — web entrypoint and compiled assets
+- `routes/` — route definitions (`web.php`, `api.php`)
+
+## Notes & tips
+
+- Payments: check `config` files and `.env` for gateway credentials before testing payments.
+- The project uses `nwidart/laravel-modules`; to work with modules, see `Modules/` and the package docs.
+- If you get permission errors with storage, ensure `storage/` and `bootstrap/cache` are writable.
 
 ## Contributing
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+If you'd like to contribute, please open issues or pull requests. Follow standard Laravel contribution practices and ensure tests pass.
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This project uses the MIT license (see `composer.json`).
+
+---
+
+If you want, I can update the README with more details (setup for Docker, CI, exact seeders, environment checklist, or example `.env` values). Tell me which you'd like next.
